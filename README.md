@@ -43,13 +43,7 @@ uv sync
 uv run backend/app/main.py
 ```
 
-Then open <http://localhost:3001> in your browser.
-
-Override the port with an environment variable if 3001 is taken:
-
-```bash
-PORT=4000 uv run backend/app/main.py   # → http://localhost:4000
-```
+Then open <http://localhost:3002> in your browser.
 
 On first run, `init_db()` creates a SQLite database (`vulnerable_app.db`) in
 the project root. There are **no default users** — register one via
