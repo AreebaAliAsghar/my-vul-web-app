@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — Security Vulnerability Lab</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-title">Security Vulnerability Lab</div>
+    <div class="header-logos">
+      <img src="/static/images/PUCIT_Logo.png" alt="PUCIT">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="auth-page">
+      <section class="auth-hero">
+        <h1>Security Vulnerability Lab</h1>
+        <p>An intentionally vulnerable web application for security education.
+           Create an account to start exploring common web flaws, exploit them
+           in a safe environment, and learn how to mitigate them in real code.</p>
+        <div class="hero-logos">
+          <img src="/static/images/PUCIT_Logo.png" alt="PUCIT">
+          <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+          <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+        </div>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-card">
+          <h2>Create an account</h2>
+          <p class="subtitle">Sign up to begin your security training.</p>
+
+          <form id="signup-form" action="/signup" method="POST" novalidate>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" required
+                     autocomplete="username" placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required
+                     autocomplete="email" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required
+                     autocomplete="new-password" placeholder="Create a password">
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Confirm password</label>
+              <input type="password" id="confirm_password" name="confirm_password"
+                     required autocomplete="new-password"
+                     placeholder="Re-enter your password">
+            </div>
+            <span id="error-message" class="form-error" role="alert"></span>
+            <button type="submit" class="btn-primary">Create account</button>
+          </form>
+
+          <p class="auth-footer">
+            Already have an account? <a href="/login">Sign in</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Client-side confirmation check. The server does not re-validate
+    // confirm_password — it just stores whatever `password` was posted.
+    (function () {
+      var form = document.getElementById('signup-form');
+      var errorEl = document.getElementById('error-message');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        errorEl.textContent = '';
+        var pw = form.elements['password'].value;
+        var cpw = form.elements['confirm_password'].value;
+        if (pw !== cpw) {
+          event.preventDefault();
+          errorEl.textContent = 'Passwords do not match';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
