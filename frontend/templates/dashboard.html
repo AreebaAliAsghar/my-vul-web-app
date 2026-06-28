@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Security Vulnerability Lab</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-title">Security Vulnerability Lab</div>
+    <div class="header-logos">
+      <img src="/static/images/PUCIT_Logo.png" alt="PUCIT">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+    </div>
+  </header>
+
+  <div class="page">
+    <section class="dashboard-hero">
+      <h1>Security Vulnerability Lab</h1>
+      <p class="subtitle">Logged in as <strong>{{username}}</strong></p>
+      <a class="btn-logout" href="/logout">Log out</a>
+    </section>
+
+    <main class="dashboard-content">
+      <div class="mission-card">
+        <strong>Mission.</strong> This dashboard catalogues the eight
+        intentional vulnerabilities built into this application. Each card
+        below identifies a flaw, where it lives in the code, and the
+        security principle it violates. Your goal: find each one, exploit
+        it, and then research how a real-world application would defend
+        against it.
+      </div>
+
+      <h2 class="section-title">Vulnerability catalogue</h2>
+      <div class="vuln-grid">
+        <article class="vuln-card">
+          <span class="vuln-tag">SQLi</span>
+          <h3>SQL Injection in login &amp; signup</h3>
+          <p>Queries in <code>auth_service.py</code> are built with string
+             concatenation. A <code>username</code> of
+             <code>' OR '1'='1</code> bypasses authentication.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-xss">XSS</span>
+          <h3>Stored XSS via dashboard username</h3>
+          <p>The <code>{{username}}</code> placeholder is replaced with
+             <code>str.replace</code> in <code>routes/auth.py</code> with
+             no HTML escaping, so a malicious username executes on every
+             visit.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-xss">XSS</span>
+          <h3>Reflected XSS via /search</h3>
+          <p>The <code>q</code> query parameter is interpolated into both
+             the SQL <code>LIKE</code> clause and the HTML response body
+             without escaping.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-session">Session</span>
+          <h3>Session hijacking via hardcoded secret</h3>
+          <p><code>SessionMiddleware</code> is initialised with the
+             literal <code>super-secret-key-12345</code> in
+             <code>main.py</code>. Anyone with the secret can forge
+             cookies.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-crypto">Crypto</span>
+          <h3>Weak password storage (MD5, no salt)</h3>
+          <p>Passwords are hashed with plain MD5 in
+             <code>core/security.py</code>. No salt, no work factor — a
+             rainbow table defeats every account.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-brute">Brute</span>
+          <h3>No rate limiting on any endpoint</h3>
+          <p>No rate-limit middleware, no failed-login backoff. An
+             attacker can brute-force credentials as fast as the network
+             allows.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-exposed">Exposed</span>
+          <h3>Unauthenticated database download</h3>
+          <p><code>GET /download/db</code> returns the SQLite file with
+             no session check. Pull the entire user table (including
+             MD5 hashes) in one request.</p>
+        </article>
+
+        <article class="vuln-card">
+          <span class="vuln-tag tag-csrf">CSRF</span>
+          <h3>No CSRF tokens on any form</h3>
+          <p>Login and signup forms have no hidden CSRF token. A
+             cross-site form post can drive the victim's authenticated
+             session.</p>
+        </article>
+      </div>
+
+      <h2 class="section-title">The process</h2>
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="step-num">1</div>
+          <h4>Find</h4>
+          <p>Locate the vulnerable code path and understand the
+             untrusted input it consumes.</p>
+        </div>
+        <div class="process-card">
+          <div class="step-num">2</div>
+          <h4>Exploit</h4>
+          <p>Craft a payload that demonstrates the flaw. Confirm the
+             impact end-to-end.</p>
+        </div>
+        <div class="process-card">
+          <div class="step-num">3</div>
+          <h4>Mitigate</h4>
+          <p>Research how a real application would defend the same
+             surface, and apply the principle elsewhere.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

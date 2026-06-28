@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — Security Vulnerability Lab</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-title">Security Vulnerability Lab</div>
+    <div class="header-logos">
+      <img src="/static/images/PUCIT_Logo.png" alt="PUCIT">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+      <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="auth-page">
+      <section class="auth-hero">
+        <h1>Security Vulnerability Lab</h1>
+        <p>An intentionally vulnerable web application for security education.
+           Explore the catalogue of common web flaws, exploit them in a safe
+           environment, and learn how to mitigate them in real-world code.</p>
+        <div class="hero-logos">
+          <img src="/static/images/PUCIT_Logo.png" alt="PUCIT">
+          <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+          <img src="/static/images/blue-logo-scl2.png" alt="SCL">
+        </div>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-card">
+          <h2>Welcome back</h2>
+          <p class="subtitle">Sign in to continue your security training.</p>
+
+          <form id="login-form" novalidate>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" required
+                     autocomplete="username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required
+                     autocomplete="current-password" placeholder="Enter your password">
+            </div>
+            <span id="error-message" class="form-error" role="alert"></span>
+            <button type="submit" class="btn-primary">Sign in</button>
+          </form>
+
+          <p class="auth-footer">
+            New here? <a href="/signup">Create an account</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Login uses fetch() + JSON so the form can display errors
+    // inline without a page reload. The server returns
+    //   { "success": true,  "redirect": "/welcome" }      on success
+    //   { "success": false, "error": "<message>" }         on failure
+    (function () {
+      var form = document.getElementById('login-form');
+      var errorEl = document.getElementById('error-message');
+      if (!form) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        errorEl.textContent = '';
+
+        var formData = new FormData(form);
+        fetch('/login', { method: 'POST', body: formData })
+          .then(function (response) {
+            return response.json().then(function (data) {
+              return { ok: response.ok, status: response.status, data: data };
+            });
+          })
+          .then(function (result) {
+            if (result.data && result.data.success) {
+              window.location.href = result.data.redirect || '/welcome';
+            } else {
+              errorEl.textContent =
+                (result.data && result.data.error) || 'Login failed';
+            }
+          })
+          .catch(function (err) {
+            errorEl.textContent = 'Network error: ' + err;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
